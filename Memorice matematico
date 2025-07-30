@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Memorice Matemático</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .card {
+      width: 100px; height: 100px;
+      background: #ccc; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 20px; cursor: pointer;
+      border-radius: 10px;
+    }
+    .matched {
+      background: lightgreen;
+    }
+  </style>
+</head>
+<body>
+  <h1>Memorice Matemático</h1>
+  <p>Haz clic en dos cartas para encontrar las parejas.</p>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const pares = [
+      { pregunta: "6 × 7", respuesta: "42" },
+      { pregunta: "5 + 3", respuesta: "8" },
+      { pregunta: "9 ÷ 3", respuesta: "3" },
+      { pregunta: "12 − 4", respuesta: "8" },
+    ];
+
+    let cartas = [];
+    pares.forEach(par => {
+      cartas.push({ texto: par.pregunta, valor: par.respuesta });
+      cartas.push({ texto: par.respuesta, valor: par.respuesta });
+    });
+
+    cartas = cartas.sort(() => 0.5 - Math.random());
+
+    const grid = document.getElementById("grid");
+    let seleccionadas = [];
+
+    cartas.forEach((carta, index) => {
+      const div = document.createElement("div");
+      div.classList.add("card");
+      div.dataset.valor = carta.valor;
+      div.innerText = "?";
+
+      div.addEventListener("click", () => {
+        if (div.innerText === "?" && seleccionadas.length < 2) {
+          div.innerText = carta.texto;
+          seleccionadas.push({ div, valor: carta.valor });
+
+          if (seleccionadas.length === 2) {
+            setTimeout(() => {
+              if (seleccionadas[0].valor === seleccionadas[1].valor) {
+                seleccionadas[0].div.classList.add("matched");
+                seleccionadas[1].div.classList.add("matched");
+              } else {
+                seleccionadas[0].div.innerText = "?";
+                seleccionadas[1].div.innerText = "?";
+              }
+              seleccionadas = [];
+            }, 600);
+          }
+        }
+      });
+
+      grid.appendChild(div);
+    });
+  </script>
+</body>
+</html>
